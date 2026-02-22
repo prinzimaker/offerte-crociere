@@ -1,0 +1,15 @@
+# Rewrite rules per l'API Server (document root)
+#
+# Tutte le richieste vengono gestite da index.php
+
+RewriteEngine On
+
+# Passa l'header Authorization a PHP
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# Non riscrivere file esistenti
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# Redirige tutto a index.php
+RewriteRule ^(.*)$ index.php [QSA,L]
