@@ -1,0 +1,17 @@
+# Rewrite rules per l'API Server (mscapi.fttn.it)
+#
+# Redirige tutte le richieste a public/index.php
+# Assicura che l'header Authorization venga passato a PHP.
+
+RewriteEngine On
+
+# Passa l'header Authorization a PHP (necessario su alcuni Apache)
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# Non riscrivere file e directory esistenti
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirige tutto a public/index.php
+RewriteRule ^(.*)$ public/index.php [QSA,L]

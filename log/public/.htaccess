@@ -1,0 +1,11 @@
+# Rewrite rules per il Log Viewer (document root)
+#
+# Tutte le richieste vengono gestite da index.php
+
+RewriteEngine On
+
+# Non riscrivere file esistenti
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# Redirige tutto a index.php
+RewriteRule ^(.*)$ index.php [QSA,L]
