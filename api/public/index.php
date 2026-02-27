@@ -39,29 +39,37 @@ $router->get('/health', function () {
 
 // --- Route: POST /log ---
 $router->post('/log', function () use ($config) {
+    $logFile = $config['app']['log_file'];
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+
     // 1. Autenticazione
     $auth = new Auth($config['api']['token']);
     if (!$auth->validateRequest()) {
+        Logger::logError("AUTH_FAILED — IP: {$ip}", $logFile);
         Response::error(401, 'Token di autenticazione mancante o non valido');
     }
 
     // 2. Leggi il body della richiesta
     $rawBody = file_get_contents('php://input');
     if (empty($rawBody)) {
+        Logger::logError("EMPTY_BODY — IP: {$ip}", $logFile);
         Response::error(400, 'Body della richiesta vuoto');
     }
 
     $body = json_decode($rawBody, true);
     if (json_last_error() !== JSON_ERROR_NONE) {
+        Logger::logError("INVALID_JSON — IP: {$ip} — " . json_last_error_msg(), $logFile);
         Response::error(400, 'JSON non valido: ' . json_last_error_msg());
     }
 
     // 3. Validazione parametri obbligatori
     if (empty($body['function']) || !is_string($body['function'])) {
+        Logger::logError("MISSING_FUNCTION — IP: {$ip} — Body: {$rawBody}", $logFile);
         Response::error(400, 'Parametro "function" mancante o non valido');
     }
 
     if (!isset($body['data'])) {
+        Logger::logError("MISSING_DATA — IP: {$ip} — Function: {$body['function']}", $logFile);
         Response::error(400, 'Parametro "data" mancante');
     }
 
@@ -89,10 +97,9 @@ $router->post('/log', function () use ($config) {
 
         Response::success('Logged successfully', ['log_id' => $logId]);
     } catch (\Throwable $e) {
-        // Log dell'errore su file
         Logger::logError(
-            "Errore salvataggio log: {$e->getMessage()}",
-            $config['app']['log_file']
+            "DB_ERROR — IP: {$ip} — Function: {$functionName} — {$e->getMessage()}",
+            $logFile
         );
 
         Response::error(500, 'Errore interno del server');
