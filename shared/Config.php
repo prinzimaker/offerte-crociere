@@ -22,8 +22,7 @@ return [
     ],
     'app' => [
         'base_path' => dirname(__DIR__),
-        'log_file'  => getenv('MSCAPI_LOG_FILE') ?: '
-        tail ',
+        'log_file'  => getenv('MSCAPI_LOG_FILE') ?: '/var/log/mscapi/error.log',
         'per_page'  => 50,
     ],
 ];
