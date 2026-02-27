@@ -41,5 +41,5 @@ CREATE TABLE IF NOT EXISTS `admin_users` (
 -- La password è hashata con password_hash() di PHP usando PASSWORD_DEFAULT (bcrypt)
 -- Per generare un nuovo hash: php -r "echo password_hash('nuova_password', PASSWORD_DEFAULT);"
 INSERT INTO `admin_users` (`username`, `password_hash`, `display_name`, `role`, `is_active`)
-VALUES ('admin', '$2y$10$placeholder_hash_da_generare_al_setup', 'Amministratore', 'admin', 1)
+VALUES ('admin', 'admin', 'Amministratore', 'admin', 1)
 ON DUPLICATE KEY UPDATE `id` = `id`;
